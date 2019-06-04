@@ -46,6 +46,8 @@ def get_net():
 # 对数均方根误差
 def log_rmse(net, features, labels):
     # 将小于1的值设成1，使得取对数时数值更稳定
+    # float('inf') 表示无穷大，
+    # 所以nd.clip(net(features), 1, float('inf'))执行完成后只会将小于1的变为1
     clipped_preds = nd.clip(net(features), 1, float('inf'))
     rmse = nd.sqrt(2 * loss(clipped_preds.log(), labels.log()).mean())
     return rmse.asscalar()
@@ -74,6 +76,7 @@ def get_k_fold_data(k, i, X, y):
     fold_size = X.shape[0] // k
     X_train, y_train = None, None
     for j in range(k):
+        # slice 切片
         idx = slice(j * fold_size, (j + 1) * fold_size)
         X_part, y_part = X[idx, :], y[idx]
         if j == i:
